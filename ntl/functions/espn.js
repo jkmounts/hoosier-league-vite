@@ -94,10 +94,17 @@ exports.handler = async function(event, context) {
     });
     return {
       teamId: team.id,
+      teamDetails: team,
       h2h: h2hRecord,
       topHalf: topHalfRecord,
+      overall: {
+        wins: h2hRecord.wins + topHalfRecord.wins,
+        losses: h2hRecord.losses + topHalfRecord.losses,
+      }
     };
   });
+
+  console.log(records);
 
 
   return {
