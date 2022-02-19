@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "node-fetch": "^2.6.7",
+    "normalize.css": "^8.0.1",
     "vue": "^3.2.25"
   },
   "devDependencies": {
