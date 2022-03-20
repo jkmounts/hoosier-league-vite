@@ -43,16 +43,19 @@ exports.handler = async function(event, context) {
   });
 
   const weeklyRankings = weeklyScores.map((week) => {
-    if (week.id <= 14) {
-      return week.matchups
-        .reduce((prev, curr) => {
-          prev.push({teamId: curr.homeTeamId, totalPoints: curr.homeTeamScore}, {teamId: curr.awayTeamId, totalPoints: curr.awayTeamScore});
-          return prev;
-        }, [])
-        .sort((a, b) => {
-          return b.totalPoints - a.totalPoints;
-        });
-    }
+    return week.matchups
+      .reduce((prev, curr) => {
+        if (curr.homeTeamId) {
+          prev.push({teamId: curr.homeTeamId, totalPoints: curr.homeTeamScore});
+        }
+        if (curr.awayTeamId) {
+          prev.push({teamId: curr.awayTeamId, totalPoints: curr.awayTeamScore});
+        }
+        return prev;
+      }, [])
+      .sort((a, b) => {
+        return b.totalPoints - a.totalPoints;
+      });
   });
 
   const records = teams.map((team) => {
@@ -104,11 +107,56 @@ exports.handler = async function(event, context) {
     };
   });
 
-  console.log(records);
+  // Calculate bowl points
+  const bowlPoints = teams.map((team) => {
+    let totalPoints = 0;
+    weeklyRankings.forEach((week) => {
+      // Get Points scored by team for each week
+      const pointsForWeek = week.find((score) => {
+        return score.teamId === team.id;
+      }).totalPoints;
+      console.log(pointsForWeek);
+      // Get Ranking for team for each week
+      const rankForWeek = week.findIndex((score) => {
+        return score.teamId === team.id;
+      }) + 1;
+      if (pointsForWeek > 100) {
+        totalPoints += pointsForWeek - 100;
+      }
+      switch (rankForWeek) {
+      case 1:
+        return totalPoints += 250;
+      case 2:
+        return totalPoints += 180;
+      case 3:
+        return totalPoints += 150;
+      case 4:
+        return totalPoints += 120;
+      case 5:
+        return totalPoints += 100;
+      case 6:
+        return totalPoints += 80;
+      case 7:
+        return totalPoints += 60;
+      case 8:
+        return totalPoints += 40;
+      case 9:
+        return totalPoints += 20;
+      case 10:
+        return totalPoints += 10;
+      default:
+        return;
+      }
+    });
+    return {
+      teamId: team.id,
+      bowlPoints: totalPoints,
+    };
+  });
 
 
   return {
     statusCode: 200,
-    body: JSON.stringify(records),
+    body: JSON.stringify(bowlPoints),
   };
 };
