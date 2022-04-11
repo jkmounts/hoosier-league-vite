@@ -3,16 +3,21 @@
 // Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
 import HelloWorld from './components/HelloWorld.vue';
 import RankingsTable from './components/RankingsTable.vue';
+import BowlPoints from './components/BowlPoints.vue';
 import { onMounted, reactive } from 'vue';
 
 const leagueStore = reactive({
   records: [],
+  bowlPoints: [],
+  teams: [],
 });
 
 onMounted(async () => {
   const apiResults =  await fetch('/.netlify/functions/espn').then(response => response.json());
   console.log(apiResults);
   leagueStore.records = apiResults.records;
+  leagueStore.bowlPoints = apiResults.bowlPoints;
+  leagueStore.teams = apiResults.teams;
 });
 
 </script>
@@ -21,6 +26,7 @@ onMounted(async () => {
   <div>
     <h1>Hoosier League</h1>
     <RankingsTable :records="leagueStore.records"/>
+    <BowlPoints :bowlPoints="leagueStore.bowlPoints" :teams="leagueStore.teams"/>
   </div>
 </template>
 
