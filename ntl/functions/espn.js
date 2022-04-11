@@ -115,7 +115,6 @@ exports.handler = async function(event, context) {
       const pointsForWeek = week.find((score) => {
         return score.teamId === team.id;
       }).totalPoints;
-      console.log(pointsForWeek);
       // Get Ranking for team for each week
       const rankForWeek = week.findIndex((score) => {
         return score.teamId === team.id;
@@ -157,6 +156,6 @@ exports.handler = async function(event, context) {
 
   return {
     statusCode: 200,
-    body: JSON.stringify(bowlPoints),
+    body: JSON.stringify({teams, weeklyScores, weeklyRankings, records, bowlPoints}),
   };
 };

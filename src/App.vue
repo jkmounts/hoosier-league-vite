@@ -6,12 +6,13 @@ import RankingsTable from './components/RankingsTable.vue';
 import { onMounted, reactive } from 'vue';
 
 const leagueStore = reactive({
-  records: []
+  records: [],
 });
 
 onMounted(async () => {
-  leagueStore.records = await fetch('/.netlify/functions/espn').then(response => response.json());
-  console.log(leagueStore);
+  const apiResults =  await fetch('/.netlify/functions/espn').then(response => response.json());
+  console.log(apiResults);
+  leagueStore.records = apiResults.records;
 });
 
 </script>
